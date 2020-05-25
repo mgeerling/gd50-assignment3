@@ -26,12 +26,11 @@ function Tile:init(x, y, color, variety, shiny)
     -- tile appearance/points
     self.color = color
     self.variety = variety
-self.shiny = shiny
+    self.shiny = shiny
 
 end
 
 function Tile:render(x, y, shiny)
-    --TODO do not understand the self.x + x 
     -- draw shadow
     love.graphics.setColor(34, 32, 52, 255)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
@@ -47,7 +46,7 @@ function Tile:render(x, y, shiny)
 
         love.graphics.setColor(255, 255, 255, 150)
         love.graphics.rectangle('fill', (self.gridY) * 32 + (VIRTUAL_WIDTH - 272),
-            (self.gridX + 1) * 32 + 16, 32, 32, 4)
+            (self.gridX) * 32 + 16, 16, 16, 4)
 
         -- back to alpha
         love.graphics.setBlendMode('alpha')

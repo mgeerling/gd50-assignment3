@@ -142,12 +142,16 @@ function PlayState:update(dt)
                 gSounds['error']:play()
                 self.highlightedTile = nil
             else
-                
+
+
                 -- swap grid positions of tiles
                 local tempX = self.highlightedTile.gridX
                 local tempY = self.highlightedTile.gridY
 
                 local newTile = self.board.tiles[y][x]
+
+                --TODO check to make sure this is an allowed swap 
+                self:checkColors(self.highlightedTile, newTile, self.board)
 
                 self.highlightedTile.gridX = newTile.gridX
                 self.highlightedTile.gridY = newTile.gridY
@@ -175,6 +179,28 @@ function PlayState:update(dt)
     end
 
     Timer.update(dt)
+end
+
+
+--[[
+    Check colors to see if a match is allowed
+]]
+
+function PlayState:checkColors(tile, newTile, board)
+    local color = tile.color 
+    local positionX = newTile.gridX  
+    local positionY = newTile.gridY
+    local valid = true 
+    local board = board.tiles
+    while valid == true do 
+        -- check newTile[y][x-1], newTile[y][x+1], newTile[y+1][x], newTile[y-1][x]
+        if board[positionY][positionX-1].color ~= color and board[positionY][positionX+1].color and board[positionY+1][positionX].color and board[positionY-1][positionX].color then 
+            -- do not swap 
+        else 
+            valid = false 
+        end 
+    end 
+
 end
 
 --[[
