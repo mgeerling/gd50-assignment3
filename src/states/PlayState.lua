@@ -61,7 +61,7 @@ function PlayState:enter(params)
     self.level = params.level
 
     -- spawn a board and place it toward the right
-    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16)
+    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16, params.level)
 
     -- grab score from params if it was passed
     self.score = params.score or 0
@@ -195,7 +195,16 @@ function PlayState:calculateMatches()
 
         -- add score for each match
         for k, match in pairs(matches) do
-            self.score = self.score + #match * 50
+            local scoreMult = 0 
+            for j, tile in pairs(match) do 
+                -- subtract 1 as base tiles should not provide additional points 
+                scoreMult = scoreMult + tile.variety - 1
+            end 
+            -- GD 50 assignment 3 req 2 - implement extra point scoring based on tile variety
+            self.score = self.score + #match * 50 + scoreMult*25
+            -- Assignment 3 Req 1: Implement time addition on matches, such that scoring a match extends the timer by 1 second per tile in a match.
+            -- Adds back 1 second to timer for every tile in a match
+            self.timer = self.timer + #match
         end
 
         -- remove any tiles that matched from the board, making empty spaces
@@ -224,6 +233,7 @@ function PlayState:render()
     self.board:render()
 
     -- render highlighted tile if it exists
+    --TODO reuse for shiny 
     if self.highlightedTile then
         
         -- multiply so drawing white rect makes it brighter

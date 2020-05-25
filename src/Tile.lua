@@ -12,8 +12,8 @@
 ]]
 
 Tile = Class{}
-
-function Tile:init(x, y, color, variety)
+-- level is passed in as a variety in entry functions
+function Tile:init(x, y, color, variety, shiny)
     
     -- board positions
     self.gridX = x
@@ -26,10 +26,12 @@ function Tile:init(x, y, color, variety)
     -- tile appearance/points
     self.color = color
     self.variety = variety
+self.shiny = shiny
+
 end
 
-function Tile:render(x, y)
-    
+function Tile:render(x, y, shiny)
+    --TODO do not understand the self.x + x 
     -- draw shadow
     love.graphics.setColor(34, 32, 52, 255)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
@@ -39,4 +41,15 @@ function Tile:render(x, y)
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
         self.x + x, self.y + y)
+    --TODO fix shiny rendering - has to follow tile
+    if self.shiny == true then 
+        love.graphics.setBlendMode('add')
+
+        love.graphics.setColor(255, 255, 255, 150)
+        love.graphics.rectangle('fill', (self.gridY) * 32 + (VIRTUAL_WIDTH - 272),
+            (self.gridX + 1) * 32 + 16, 32, 32, 4)
+
+        -- back to alpha
+        love.graphics.setBlendMode('alpha')
+    end 
 end

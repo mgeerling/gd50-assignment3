@@ -13,11 +13,11 @@
 
 Board = Class{}
 
-function Board:init(x, y)
+function Board:init(x, y, level)
     self.x = x
     self.y = y
     self.matches = {}
-
+    self.level = level
     self:initializeTiles()
 end
 
@@ -31,8 +31,13 @@ function Board:initializeTiles()
 
         for tileX = 1, 8 do
             
+            local shinyChance = math.random(1,100)
+            local shiny = false 
+            if shinyChance > 75 then 
+                shiny = true
+            end
             -- create a new tile at X,Y with a random color and variety
-            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6)))
+            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), self.level, shiny))
         end
     end
 
@@ -78,7 +83,14 @@ function Board:calculateMatches()
 
                     -- go backwards from here by matchNum
                     for x2 = x - 1, x - matchNum, -1 do
-                        
+                        --TODO check if the tile is shiny. If it is shiny, add everything in its row 
+                        --inside of this loop set x2 = to end condition to kill this loop and then loop through entire row and add it?
+                        if self.tiles[y][x2].shiny == true then 
+                            for x3 = 1, 8 do 
+                                table.insert(match,self.tiles[y][x3])
+                            end
+                            x2 = x - matchNum
+                        end
                         -- add each tile to the match that's in that match
                         table.insert(match, self.tiles[y][x2])
                     end
@@ -240,7 +252,7 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(18), math.random(6))
+                local tile = Tile(x, y, math.random(18), self.level)
                 tile.y = -32
                 self.tiles[y][x] = tile
 
